@@ -9,19 +9,19 @@ function App() {
   const [conversionRate, setConversionRate] = useState(null);
   const [convertedAmount, setConvertedAmount] = useState(null);
 
-  // Fetching currency options
+  
   useEffect(() => {
     fetch('https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies.json')
       .then((response) => response.json())
       .then((data) => {
-        setCurrencies(Object.keys(data)); // Set all available currencies
+        setCurrencies(Object.keys(data)); 
       })
       .catch((error) => {
         console.error('Error fetching currencies:', error);
       });
   }, []);
 
-  // Fetch the conversion rate whenever the currencies or amount change
+ 
   useEffect(() => {
     if (fromCurrency && toCurrency) {
       fetch(`https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/${fromCurrency}.json`)
@@ -29,7 +29,7 @@ function App() {
         .then((data) => {
           const rate = data[fromCurrency][toCurrency];
           setConversionRate(rate);
-          setConvertedAmount(amount * rate); // Convert based on fetched rate
+          setConvertedAmount(amount * rate); 
         })
         .catch((error) => {
           console.error('Error fetching conversion rate:', error);
@@ -37,7 +37,7 @@ function App() {
     }
   }, [fromCurrency, toCurrency, amount]);
 
-  // Handle form changes
+  
   const handleAmountChange = (e) => setAmount(e.target.value);
   const handleFromCurrencyChange = (e) => setFromCurrency(e.target.value);
   const handleToCurrencyChange = (e) => setToCurrency(e.target.value);
