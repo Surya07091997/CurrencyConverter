@@ -6,41 +6,38 @@ function App() {
   const [amount, setAmount] = useState(1);
   const [fromCurrency, setFromCurrency] = useState('inr');
   const [toCurrency, setToCurrency] = useState('djf');
-  const [conversionRate, setConversionRate] = useState(null);
   const [convertedAmount, setConvertedAmount] = useState(null);
+  const [showResult, setShowResult] = useState(false);
 
-  
   useEffect(() => {
     fetch('https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies.json')
       .then((response) => response.json())
       .then((data) => {
-        setCurrencies(Object.keys(data)); 
+        setCurrencies(Object.keys(data));
       })
       .catch((error) => {
         console.error('Error fetching currencies:', error);
       });
   }, []);
 
- 
-  useEffect(() => {
+  const handleAmountChange = (e) => setAmount(e.target.value);
+  const handleFromCurrencyChange = (e) => setFromCurrency(e.target.value);
+  const handleToCurrencyChange = (e) => setToCurrency(e.target.value);
+
+  const handleConvert = () => {
     if (fromCurrency && toCurrency) {
       fetch(`https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/${fromCurrency}.json`)
         .then((response) => response.json())
         .then((data) => {
           const rate = data[fromCurrency][toCurrency];
-          setConversionRate(rate);
-          setConvertedAmount(amount * rate); 
+          setConvertedAmount(amount * rate);
+          setShowResult(true);
         })
         .catch((error) => {
           console.error('Error fetching conversion rate:', error);
         });
     }
-  }, [fromCurrency, toCurrency, amount]);
-
-  
-  const handleAmountChange = (e) => setAmount(e.target.value);
-  const handleFromCurrencyChange = (e) => setFromCurrency(e.target.value);
-  const handleToCurrencyChange = (e) => setToCurrency(e.target.value);
+  };
 
   return (
     <div className="container">
@@ -75,16 +72,18 @@ function App() {
             </option>
           ))}
         </select>
-        <button id="convert-btn">Convert</button>
+        <button id="convert-btn" onClick={handleConvert}>
+          Convert
+        </button>
       </div>
-      <div className="result">
-        {convertedAmount !== null && (
+      {showResult && convertedAmount !== null && (
+        <div className="result">
           <p>
             Converted Amount: {amount} {fromCurrency.toUpperCase()} ={' '}
             {convertedAmount.toFixed(2)} {toCurrency.toUpperCase()}
           </p>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
